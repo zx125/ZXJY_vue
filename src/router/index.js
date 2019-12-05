@@ -2,10 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Free from '../views/Free.vue'
+import Search from '../views/Search.vue'
 import Course from '../views/Course.vue'
 import LightCourse from '../views/LightCourse.vue'
+import FreeDetail from '../views/FreeDetail.vue'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
     {
@@ -18,12 +20,12 @@ const routes = [
         redirect: '/'
     },
     {
-        path: '/Free',
+        path: '/free',
         name: 'free',
         component: Free
     },
     {
-        path: '/Course',
+        path: '/course',
         name: 'course',
         component: Course
     },
@@ -32,12 +34,22 @@ const routes = [
         name: 'light-course',
         component: LightCourse
     },
+    {
+        path: '/free/detail/:pk',
+        name: 'free-detail',
+        component: FreeDetail
+    },
+    {
+        path: '/search',
+        name: 'search',
+        component: Search
+    },
 ];
 
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
-})
+});
 
 export default router

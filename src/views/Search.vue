@@ -2,34 +2,6 @@
     <div class="course">
         <Header></Header>
         <div class="main">
-            <!-- 筛选条件 -->
-            <div class="condition">
-                <ul class="cate-list">
-                    <li class="title">课程分类:</li>
-                    <li :class="filter.course_category==0?'this':''" @click="filter.course_category=0">全部</li>
-                    <li :class="filter.course_category==category.id?'this':''" v-for="category in category_list"
-                        @click="filter.course_category=category.id" :key="category.name">{{category.name}}
-                    </li>
-                </ul>
-
-                <div class="ordering">
-                    <ul>
-                        <li class="title">筛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选:</li>
-                        <li class="default" :class="(filter.ordering=='id' || filter.ordering=='-id')?'this':''"
-                            @click="filter.ordering='-id'">默认
-                        </li>
-                        <li class="hot" :class="(filter.ordering=='students' || filter.ordering=='-students')?'this':''"
-                            @click="filter.ordering=(filter.ordering=='-students'?'students':'-students')">人气
-                        </li>
-                        <li class="price"
-                            :class="filter.ordering=='price'?'price_up this':(filter.ordering=='-price'?'price_down this':'')"
-                            @click="filter.ordering=(filter.ordering=='-price'?'price':'-price')">价格
-                        </li>
-                    </ul>
-                    <p class="condition-result">共{{course_total}}个课程</p>
-                </div>
-
-            </div>
             <!-- 课程列表 -->
             <div class="course-list">
                 <div class="course-item" v-for="course in course_list" :key="course.name">
@@ -46,7 +18,8 @@
                             <span v-else>共{{course.sections}}课时/更新完成</span>
                         </p>
                         <ul class="section-list">
-                            <li v-for="(section, key) in course.section_list" :key="section.name"><span class="section-title">0{{key+1}}  |  {{section.name}}</span>
+                            <li v-for="(section, key) in course.section_list" :key="section.name"><span
+                                    class="section-title">0{{key+1}}  |  {{section.name}}</span>
                                 <span class="free" v-if="section.free_trail">免费</span></li>
                         </ul>
                         <div class="pay-box">
@@ -93,11 +66,13 @@
                     ordering: "-id",    // 数据的排序方式，默认值是-id，表示对于id进行降序排列
                     page_size: 2,       // 单页数据量
                     page: 1,
+                    search: '',
                 }
             }
         },
         created() {
-            this.get_category();
+            this.get_search_word();
+            // this.get_category();
             this.get_course();
         },
         components: {
@@ -105,6 +80,10 @@
             // Footer,
         },
         watch: {
+            "$route": function () {
+                this.get_search_word();
+                this.get_course();
+            },
             "filter.course_category": function () {
                 this.filter.page = 1;
                 this.get_course();
@@ -117,7 +96,10 @@
             },
             "filter.page": function () {
                 this.get_course();
-            }
+            },
+            "filter.search": function () {
+                this.get_course();
+            },
         },
         methods: {
             handleSizeChange(val) {
@@ -129,16 +111,21 @@
                 // 页码发生变化时执行的方法
                 this.filter.page = val;
             },
-            get_category() {
-                // 获取课程分类信息
-                this.$axios.get(`${this.$settings.base_url}/course/categories`).then(response => {
-                    this.category_list = response.data;
-                }).catch(() => {
-                    this.$message({
-                        message: "获取课程分类信息有误，请联系客服工作人员",
-                    })
-                })
+            get_search_word() {
+                // console.log(this.$route)
+                this.filter.search = this.$route.query.wd || this.$route.query.word;
             },
+
+            // get_category() {
+            //     // 获取课程分类信息
+            //     this.$axios.get(`${this.$settings.base_url}/course/categories`).then(response => {
+            //         this.category_list = response.data;
+            //     }).catch(() => {
+            //         this.$message({
+            //             message: "获取课程分类信息有误，请联系客服工作人员",
+            //         })
+            //     })
+            // },
             get_course() {
                 // 排序
                 let filters = {
@@ -162,6 +149,12 @@
                 } else {
                     filters.page = 1;
                 }
+                // 搜索条件
+                if (this.filter.search) {
+                    filters.search = this.filter.search;
+                } else {
+                    filters.search = '';
+                }
 
                 // 获取课程列表信息
                 this.$axios.get(`${this.$settings.base_url}/course/free`, {
@@ -170,7 +163,7 @@
                     // console.log(response.data);
                     this.course_list = response.data.results;
                     this.course_total = response.data.count;
-                    // console.log(this.course_list);
+                    console.log(this.course_list);
                 }).catch(() => {
                     this.$message({
                         message: "获取课程信息有误，请联系客服工作人员"
@@ -446,6 +439,7 @@
     .course-item {
         position: relative;
     }
+
     .course-item .pay-box {
         position: absolute;
         bottom: 20px;

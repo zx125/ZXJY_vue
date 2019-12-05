@@ -36,9 +36,18 @@
                 </div>
             </div>
 
+
+            <form class="search">
+                <div class="tips" v-if="is_search_tip">
+                    <span @click="go_search('python')">Python</span>
+                    <span @click="go_search('linux')">Linux</span>
+                </div>
+                <input type="text" :placeholder="search_placeholder" @focus="on_search" @blur="off_search" v-model="word">
+                <button type="button" class="el-icon-search"  @click="go_search()"></button>
+            </form>
         </div>
 
-        <Login v-if="is_login" @close="close_login" @go="put_register" @login_success="login_success" />
+        <Login v-if="is_login" @close="close_login" @go="put_register" @login_success="login_success"/>
         <Register v-if="is_register" @close="close_register" @go="put_login"/>
     </div>
 
@@ -57,6 +66,9 @@
                 is_register: false,
                 username: this.$cookies.get('username') || '',
                 token: this.$cookies.get('token') || '',
+                is_search_tip: true,
+                search_placeholder: '',
+                word: '',
             }
         },
         components: {
@@ -64,6 +76,24 @@
             Register,
         },
         methods: {
+            on_search() {
+                this.search_placeholder = '请输入想搜索的课程';
+                this.is_search_tip = false;
+            },
+            off_search() {
+                this.search_placeholder = '';
+                this.is_search_tip = true;
+            },
+            go_search(word) {
+                if (!word) {
+                    word = this.word;
+                }
+                let wd = this.$route.query.wd || this.$route.query.word;
+                if (wd !== word) {
+                    this.$router.push(`/search?wd=${word}`);
+                }
+                this.word = '';
+            },
             goPage(url_path) {
                 // 已经是当前路由就没有必要重新跳转
                 if (this.url_path !== url_path) {
@@ -104,6 +134,9 @@
 </script>
 
 <style scoped>
+    .header {
+        background-color: white;
+    }
     .header:after {
         content: "";
         display: block;
@@ -124,7 +157,7 @@
     }
 
     .nav {
-        /*background-color: antiquewhite;*/
+        background-color: white;
         user-select: none;
         width: 1200px;
         margin: 0 auto;
@@ -180,5 +213,41 @@
     .right-part span {
         line-height: 68px;
         cursor: pointer;
+    }
+
+    .search {
+        float: right;
+        position: relative;
+        margin-top: 22px;
+    }
+    .search input, .search button {
+        border: none;
+        outline: none;
+        background-color: white;
+    }
+    .search input {
+        border-bottom: 1px solid black;
+    }
+    .search input:focus {
+        border-bottom-color: orange;
+    }
+    .search input:focus + button {
+        color: orange;
+    }
+    .search .tips {
+        position: absolute;
+        bottom: 3px;
+        left: 0;
+    }
+    .search .tips span {
+        border-radius: 11px;
+        background-color: #eee;
+        line-height: 22px;
+        display: inline-block;
+        padding: 0 3px;
+        margin-right: 3px;
+        cursor: pointer;
+        color: #666;
+        font-size: 14px;
     }
 </style>

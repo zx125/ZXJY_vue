@@ -2,6 +2,7 @@
     <div class="home">
         <Header />
         <Banner />
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     </div>
 </template>
 
@@ -21,6 +22,7 @@
 
     }
 </script>
+
 <style scoped>
     .home {
         min-width: 1200px;

@@ -3,8 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-
 Vue.config.productionTip = false;
+
 // 全局样式和配置
 import '@/assets/css/global.css'
 import settings from '@/assets/js/settings'
@@ -28,10 +28,14 @@ Vue.use(ElementUI);
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+// 视频播放插件
+require('video.js/dist/video-js.css');
+require('vue-video-player/src/custom-theme.css');
+import VideoPlayer from 'vue-video-player'
+Vue.use(VideoPlayer);
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
-
+    router,
+    store,
+    render: h => h(App)
+}).$mount('#app');
