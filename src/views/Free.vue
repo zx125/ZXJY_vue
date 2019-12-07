@@ -56,7 +56,7 @@
                                 <span class="original-price">原价：{{course.price}}元</span>
                             </div>
                             <span v-else class="discount-price">￥{{course.price}}元</span>
-                            <span class="buy-now">立即购买</span>
+                            <span class="buy-now" @click="buy_course(course)">立即购买</span>
                         </div>
                     </div>
                 </div>
@@ -120,6 +120,41 @@
             }
         },
         methods: {
+            // 购买课程
+            buy_course(course) {
+                let token = this.$cookies.get('token');
+                if (!token) {
+                    this.$message({
+                        message: "请先登录",
+                        type: 'warning',
+                        duration: 1000,
+                    });
+                    return false
+                }
+                // 已登录
+                this.$axios({
+                    url: this.$settings.base_url + '/order/pay',
+                    method: 'post',
+                    data: {
+                        subject: course.name,
+                        total_amount: course.price,
+                        goods_pks: `${course.id}`
+                    },
+                    headers: {
+                        authorization: `jwt ${token}`
+                    }
+                }).then(response => {
+                    // console.log(response.data)
+                    let pay_url = response.data;
+                    window.open(pay_url, '_self');
+                }).catch(error => {
+                    console.log(error.response.data)
+                })
+
+
+            },
+
+
             handleSizeChange(val) {
                 // 每页数据量发生变化时执行的方法
                 this.filter.page = 1;
